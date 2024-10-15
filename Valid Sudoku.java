@@ -1,52 +1,45 @@
 class Solution {
     public boolean isValidSudoku(char[][] board) {
-        boolean[] visited = new boolean[13];
-        for(int i=0;i<9;i++){
-            for(int j=0;j<9;j++){
-            if(visited[board[i][j]-46]){
-                return false;
-            }
-            else if(board[i][j] !='.'){
-                visited[board[i][j]-46] = true;
-            }
-        }
-        visited = new boolean[13];
+        return solve(board);
     }
-        for(int i=0;i<9;i++){
-            for(int j=0;j<9;j++){
-                if(visited[board[j][i]-46]){
-                    return false;
-                }
-                else if(board[j][i]!='.'){
-                    visited[board[j][i]-46]=true;
-                }
-            }
-            visited = new boolean[13];
-        }
-        int m=0,n=0;
-        while(true){
-            for(int i=0;i<3;i++){
-                for(int j=0;j<3;j++){
-                    if(visited[board[m+i][n+j]-46]){
-                        return false;
-                    }
-                    else if(board[m+i][n+j]!='.'){
-                        visited[board[m+i][n+j]-46]=true;
-                    }
-                }
-            }
-            if(n==6 && m==6) break;
 
-            if(m==6){
-                n+=3;
-                m=0;
+    boolean solve(char[][] board) {
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board.length; j++) {
+                if (board[i][j] != '.') {
+                    char num = board[i][j];
+                    board[i][j] = '.';
+                    if (!isSafe(board, i, j, num))
+                        return false;
+                    else
+                        // backtrack
+                        board[i][j] = num;
+                }
             }
-            else{
-                m+=3;
-            }
-            visited = new boolean[13];
         }
         return true;
+    }
 
+    boolean isSafe(char[][] board, int row, int col, char num) {
+        for (int i = 0; i < board.length; i++) {
+            if (board[i][col] == num) {
+                return false;
+            }
+
+            if (board[row][i] == num) {
+                return false;
+            }
+        }
+        int sqrt = (int) (Math.sqrt(board.length));
+        int rowStart = row - row % sqrt;
+        int colStart = col - col % sqrt;
+        for (int r = rowStart; r < rowStart + sqrt; r++) {
+            for (int c = colStart; c < colStart + sqrt; c++) {
+                if (board[r][c] == num) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
